@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Events;
+
+use App\Models\Ticket;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class TicketStatusChanged
+{
+    use Dispatchable, SerializesModels;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(
+        public readonly Ticket $ticket,
+        public readonly ?string $fromStatus,
+        public readonly string $toStatus,
+        public readonly ?int $changedBy,
+        public readonly ?string $reason = null,
+    ) {
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('status-changed'),
+        ];
+    }
+}
